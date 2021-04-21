@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 const Document = require('./Document');
+require('dotenv').config();
 
 try {
 	// Connect to the MongoDB cluster
-	mongoose.connect(
-		`mongodb+srv://m001-student:manya123@sandbox.5h8ci.mongodb.net/google-docs-simple-clone-db?retryWrites=true&w=majority`,
-		{ useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: true },
-		() => console.log(' Mongoose is connected')
+	const url = process.env.DB_URL;
+	mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: true }, () =>
+		console.log(' Mongoose is connected')
 	);
 } catch (e) {
-	console.log('could not connect');
+	console.log('could not connect', e);
 }
 
 const io = require('socket.io')(4242, {
@@ -43,5 +43,7 @@ const findOrCreateDocument = async (id) => {
 
 	const document = await Document.findById(id);
 	if (document) return document;
-	return await Document.create({ _id: id, data: `<p style: color="#666">Welcome to docs!</p>` }).catch((e) => console.log(e));
+	return await Document.create({ _id: id, data: `<p style: color="#666">Welcome to docs!</p>` }).catch((e) =>
+		console.log(e)
+	);
 };
